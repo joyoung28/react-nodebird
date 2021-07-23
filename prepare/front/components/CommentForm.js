@@ -1,17 +1,31 @@
 import { Button, Form, Input } from "antd";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useInput from "../hooks/useInput";
 import PropTypes from "prop-types";
+import useInput from "../hooks/useInput";
+import { ADD_COMMENT_REQUEST } from "../reducers/post";
 
 const CommentForm = ({ post }) => {
   const id = useSelector((state) => state.user.me?.id);
-  const [commentText, onChangeCommentText] = useInput("");
+  const { addCommentDone, addCommentLoading } = useSelector(
+    (state) => state.post
+  );
+  const [commentText, onChangeCommentText, setCommentText] = useInput("");
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (addCommentDone) {
+      setCommentText("");
+    }
+  }, [addCommentDone]);
+
   const onSubmitComment = useCallback(() => {
-    console.log(post.id, commentText);
-  }, [commentText]);
+    dispatch({
+      type: ADD_COMMENT_REQUEST,
+      data: { content: commentText, postId: post.id, userId: id },
+    });
+  }, [commentText, id]);
+
   return (
     <Form onFinish={onSubmitComment}>
       <Form.Item style={{ position: "relative", margin: 0 }}>
@@ -24,6 +38,7 @@ const CommentForm = ({ post }) => {
           type="primary"
           htmlType="submit"
           style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
+          loading={addCommentLoading}
         >
           삐약삐약
         </Button>
