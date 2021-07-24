@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/dist/next-server/lib/head";
 import { Form, Input, Checkbox, Button } from "antd";
 import styled from "styled-components";
+import Router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../hooks/useInput";
 import AppLayout from "../components/AppLayout";
@@ -12,12 +13,26 @@ const ErrorMessage = styled.div`
 `;
 
 const Signup = () => {
+  const { signUpDone, signUpLoading, signUpError } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
 
   const [email, onChangeEmail] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
   const [password, onChangePassword] = useInput("");
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push("/");
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);

@@ -13,6 +13,13 @@ export const initialState = {
   changeNicknameLoading: false, //닉네임변경 시도중
   changeNicknameDone: false,
   changeNicknameError: null,
+  followLoading: false, //팔로우 시도중
+  followDone: false,
+  followError: null,
+  unfollowLoading: false, //언팔로우 시도중
+  unfollowDone: false,
+  unfollowError: null,
+
   me: null,
   signUpData: {},
   signInData: {},
@@ -139,6 +146,42 @@ const reducer = (state = initialState, action) => {
       case CHANGE_NICKNAME_FAILURE:
         draft.changeNicknameLoading = false;
         draft.changeNicknameError = action.error;
+        break;
+
+      case FOLLOW_REQUEST:
+        draft.followLoading = true;
+        draft.followDone = false;
+        draft.followError = null;
+        break;
+
+      case FOLLOW_SUCCESS:
+        draft.followLoading = false;
+        draft.followDone = true;
+        draft.me.Followings.push({ id: action.data });
+        break;
+
+      case FOLLOW_FAILURE:
+        draft.followLoading = false;
+        draft.followError = action.error;
+        break;
+
+      case UNFOLLOW_REQUEST:
+        draft.unfollowLoading = true;
+        draft.unfollowDone = false;
+        draft.unfollowError = null;
+        break;
+
+      case UNFOLLOW_SUCCESS:
+        draft.unfollowLoading = false;
+        draft.unfollowDone = true;
+        draft.me.Followings = draft.me.Followings.filter(
+          (v) => v.id !== action.data
+        );
+        break;
+
+      case UNFOLLOW_FAILURE:
+        draft.unfollowLoading = false;
+        draft.unfollowError = action.error;
         break;
 
       case ADD_POST_TO_ME:

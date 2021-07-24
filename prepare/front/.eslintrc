@@ -39,6 +39,8 @@
         "react/no-array-index-key": "off",
         "react/react-in-jsx-scope": "off",
         "consistent-return": "off",
-        "no-param-reassign": "off"
+        "no-param-reassign": "off",
+        "implicit-arrow-linebreak":"off",
+        "no-alert": "off"
     }
 }
