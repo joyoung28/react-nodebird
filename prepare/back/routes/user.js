@@ -1,12 +1,66 @@
 const express = require("express");
-const { User } = require("../models"); //db.User
+const { User, Post } = require("../models"); //db.User
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const db = require("../models");
 
-router.post("/login", passport.authenticate("local"));
+router.get("/", async (req, res, next) => {
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { id: req.user.id },
+      });
+      res.status(200).send(user);
+    } else {
+      res.status(200).send(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
-router.post("/", async (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr); //passport 에러
+      }
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+          },
+          {
+            model: User,
+            as: "Followings",
+          },
+          {
+            model: User,
+            as: "Followers",
+          },
+        ],
+      });
+      return res.status(200).json(fullUserWithoutPassword);
+    });
+  })(req, res, next);
+});
+
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
       where: {
@@ -27,6 +81,12 @@ router.post("/", async (req, res, next) => {
     console.log(error);
     next(error);
   }
+});
+
+router.post("/logout", isLoggedIn, (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
 });
 
 module.exports = router;

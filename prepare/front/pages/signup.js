@@ -13,7 +13,7 @@ const ErrorMessage = styled.div`
 `;
 
 const Signup = () => {
-  const { signUpDone, signUpLoading, signUpError } = useSelector(
+  const { signUpDone, signUpLoading, signUpError, me } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
@@ -23,8 +23,14 @@ const Signup = () => {
   const [password, onChangePassword] = useInput("");
 
   useEffect(() => {
+    if (me && me.id) {
+      Router.replace("/"); //페이지가 아예 나오지 않길원한다면 replace
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
     if (signUpDone) {
-      Router.push("/");
+      Router.replace("/");
     }
   }, [signUpDone]);
 
