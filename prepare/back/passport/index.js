@@ -12,7 +12,7 @@ module.exports = () => {
   //db에서 가져오기
   passport.deserializeUser(async (id, done) => {
     try {
-      await User.findOne({ where: { id } });
+      const user = await User.findOne({ where: { id } });
       done(null, user);
     } catch (error) {
       console.error(error);
