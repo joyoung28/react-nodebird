@@ -7,9 +7,12 @@ export const initialState = {
   logOutLoading: false, //로그아웃 시도중
   logOutDone: false,
   logOutError: null,
-  loadMyInfoLoading: false, //유저 정보 가져오기 시도중
+  loadMyInfoLoading: false, //내정보 가져오기 시도중
   loadMyInfoDone: false,
   loadMyInfoError: null,
+  loadUserLoading: false, //다른 유저 정보 가져오기 시도중
+  loadUserDone: false,
+  loadUserError: null,
   signUpLoading: false, //가입 시도중
   signUpDone: false,
   signUpError: null,
@@ -31,10 +34,8 @@ export const initialState = {
   loadFollowersLoading: false, //팔로윙 정보 가져오기 시도중
   loadFollowersDone: false,
   loadFollowersError: null,
-
   me: null,
-  signUpData: {},
-  signInData: {},
+  userInfo: null,
 };
 
 export const LOG_IN_REQUEST = "LOG_IN_REQUEST";
@@ -48,6 +49,10 @@ export const LOG_OUT_FAILURE = "LOG_OUT_FAILURE";
 export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO _SUCCESS";
 export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
 export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
+
+export const LOAD_USER_SUCCESS = "LOAD_USER _SUCCESS";
+export const LOAD_USER_REQUEST = "LOAD_USER_REQUEST";
+export const LOAD_USER_FAILURE = "LOAD_USER_FAILURE";
 
 export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
@@ -146,6 +151,23 @@ const reducer = (state = initialState, action) => {
       case LOAD_MY_INFO_FAILURE:
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoError = action.error;
+        break;
+
+      case LOAD_USER_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = null;
+        break;
+
+      case LOAD_USER_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true;
+        draft.userInfo = action.data;
+        break;
+
+      case LOAD_USER_FAILURE:
+        draft.loadUserLoading = false;
+        draft.loadUserError = action.error;
         break;
 
       case SIGN_UP_REQUEST:
