@@ -24,13 +24,6 @@ db.sequelize
   })
   .catch(console.error);
 
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "nodebird.com"],
-    credentials: true,
-  })
-);
-
 passportConfig();
 
 if (process.env.NODE_ENV === "production") {
@@ -40,6 +33,12 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.use(morgan("dev"));
 }
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "nodebird.com"],
+    credentials: true,
+  })
+);
 app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
