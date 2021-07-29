@@ -66,6 +66,6 @@ app.get("/", (req, res) => {
 //기본적으로 내장되어 있으나 에러처리를 바꾸려면 만들어준다.
 // app.use((err, req, res, next) => {});
 
-app.listen(3065, () => {
+app.listen(80, () => {
   console.log("서버실행 중");
 });
